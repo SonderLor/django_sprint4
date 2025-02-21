@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 
 def custom_403_csrf(request, reason=""):
@@ -13,11 +14,9 @@ def custom_500(request):
     return render(request, "pages/500.html", status=500)
 
 
-def about(request):
-    template = 'pages/about.html'
-    return render(request, template)
+class AboutView(TemplateView):
+    template_name = 'pages/about.html'
 
 
-def rules(request):
-    template = 'pages/rules.html'
-    return render(request, template)
+class RulesView(TemplateView):
+    template_name = 'pages/rules.html'
