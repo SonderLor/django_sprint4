@@ -4,7 +4,6 @@ from blog.models import Post, Category
 from blog.utils import get_relevant_posts
 
 
-# Create your views here.
 def index(request):
     template = 'blog/index.html'
 
