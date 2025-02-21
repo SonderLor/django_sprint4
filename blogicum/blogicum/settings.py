@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0-p!roc7d3g$s^cxd2)%p1@b+z#&ah!3bb*$1#j8)=^g+=%5p='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_bootstrap5',
 
     'blog.apps.BlogConfig',
     'pages.apps.PagesConfig',
@@ -104,6 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CSRF_FAILURE_VIEW = 'pages.views.custom_403_csrf'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
