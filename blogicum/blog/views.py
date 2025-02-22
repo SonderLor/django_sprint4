@@ -4,10 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 
-from blog.forms import UserEditForm, PostForm
-from blog.models import Post, Category
+from blog.forms import UserEditForm, PostForm, CommentForm
+from blog.models import Post, Category, Comment
 from blog.utils import get_relevant_posts
 
 User = get_user_model()
@@ -64,6 +64,46 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("blog:post_detail", kwargs={"post_id": self.object.id})
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post = get_object_or_404(Post, id=self.kwargs["post_id"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("blog:post_detail", kwargs={"post_id": self.kwargs["post_id"]})
+
+
+class CommentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def get_object(self, queryset=None):
+        comment = get_object_or_404(Comment, id=self.kwargs["comment_id"])
+        if comment.author != self.request.user:
+            return redirect("blog:post_detail", post_id=comment.post.id)
+        return comment
+
+    def get_success_url(self):
+        return reverse("blog:post_detail", kwargs={"post_id": self.object.post.id})
+
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+
+    def get_object(self, queryset=None):
+        comment = get_object_or_404(Comment, id=self.kwargs["comment_id"])
+        if comment.author != self.request.user:
+            return redirect("blog:post_detail", post_id=comment.post.id)
+        return comment
+
+    def get_success_url(self):
+        return reverse("blog:post_detail", kwargs={"post_id": self.object.post.id})
 
 
 class CategoryPostsView(ListView):

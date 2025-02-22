@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-
 User = get_user_model()
 
 
@@ -19,7 +18,7 @@ class BaseModel(models.Model):
 
 class Category(BaseModel):
     title = models.CharField('Заголовок', max_length=256)
-    description = models.TextField('Описание',)
+    description = models.TextField('Описание', )
     slug = models.SlugField(
         'Идентификатор',
         unique=True,
@@ -48,7 +47,7 @@ class Location(BaseModel):
 
 class Post(BaseModel):
     title = models.CharField('Заголовок', max_length=256)
-    text = models.TextField('Текст',)
+    text = models.TextField('Текст', )
     pub_date = models.DateTimeField(
         'Дата и время публикации',
         help_text='Если установить дату и время в будущем '
@@ -83,3 +82,18 @@ class Post(BaseModel):
 
     def __str__(self):
         return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField("Текст комментария")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+
+    def __str__(self):
+        return f"Комментарий {self.author.username} к {self.post.title}"

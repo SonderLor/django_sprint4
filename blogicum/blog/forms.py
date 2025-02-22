@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from blog.models import Post
+from blog.models import Post, Comment
 
 User = get_user_model()
 
@@ -28,4 +28,13 @@ class PostForm(forms.ModelForm):
             "pub_date": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
             "location": forms.Select(attrs={"class": "form-control"}),
             "category": forms.Select(attrs={"class": "form-control"}),
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["text"]
+        widgets = {
+            "text": forms.Textarea(attrs={"class": "form-control", "rows": 3})
         }
