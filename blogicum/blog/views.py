@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.views import View
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 
 from blog.forms import UserEditForm, PostForm, CommentForm
@@ -37,6 +38,15 @@ class PostDetailView(DetailView):
 
         return get_object_or_404(get_relevant_posts(Post.objects), id=post_id)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+
+        context["form"] = CommentForm()
+        context["comments"] = Comment.objects.filter(post=post)
+
+        return context
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -66,9 +76,43 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("blog:post_detail", kwargs={"post_id": self.object.id})
 
 
+class PostDeleteView(LoginRequiredMixin, View):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/create.html"
+
+    def get(self, request, *args, **kwargs):
+        post = self.get_object()
+        form = self.form_class(instance=post)
+        return self.render_form(form)
+
+    def post(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.author != self.request.user:
+            return redirect("blog:post_detail", post_id=post.id)
+        post.delete()
+        return redirect("blog:profile", username=self.request.user.username)
+
+    def get_object(self):
+        post = get_object_or_404(Post, id=self.kwargs["post_id"])
+        if post.author != self.request.user:
+            return redirect("blog:post_detail", post_id=post.id)
+        return post
+
+    def render_form(self, form):
+        context = {
+            'form': form,
+        }
+        return render(self.request, self.template_name, context)
+
+    def get_success_url(self):
+        return redirect("blog:profile", username=self.request.user.username)
+
+
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
+    template_name = "blog/comment.html"
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -82,6 +126,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 class CommentUpdateView(LoginRequiredMixin, UpdateView):
     model = Comment
     form_class = CommentForm
+    template_name = "blog/comment.html"
 
     def get_object(self, queryset=None):
         comment = get_object_or_404(Comment, id=self.kwargs["comment_id"])
@@ -95,6 +140,7 @@ class CommentUpdateView(LoginRequiredMixin, UpdateView):
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
+    template_name = "blog/comment.html"
 
     def get_object(self, queryset=None):
         comment = get_object_or_404(Comment, id=self.kwargs["comment_id"])
