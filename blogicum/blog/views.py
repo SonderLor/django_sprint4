@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView
 
 from blog.forms import UserEditForm, PostForm
 from blog.models import Post, Category
@@ -49,6 +49,21 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("blog:profile", kwargs={"username": self.request.user.username})
+
+
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/create.html"
+
+    def get_object(self, queryset=None):
+        post = get_object_or_404(Post, id=self.kwargs.get("post_id"))
+        if post.author != self.request.user:
+            return redirect("blog:post_detail", post_id=post.id)
+        return post
+
+    def get_success_url(self):
+        return reverse("blog:post_detail", kwargs={"post_id": self.object.id})
 
 
 class CategoryPostsView(ListView):
