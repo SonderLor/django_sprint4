@@ -30,6 +30,11 @@ class PostDetailView(DetailView):
 
     def get_object(self):
         post_id = self.kwargs.get("post_id")
+        post = get_object_or_404(Post, id=post_id)
+
+        if self.request.user == post.author:
+            return post
+
         return get_object_or_404(get_relevant_posts(Post.objects), id=post_id)
 
 
