@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 
 def custom_403_csrf(request, reason=""):
-    return render(request, "pages/403_csrf.html", status=403)
+    return render(request, "pages/403csrf.html", status=403)
 
 
 def custom_404(request, exception):

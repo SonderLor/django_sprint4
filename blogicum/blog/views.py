@@ -156,7 +156,7 @@ class CategoryPostsView(ListView):
     model = Post
     template_name = "blog/category.html"
     context_object_name = "post_list"
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")
@@ -180,7 +180,7 @@ class UserProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
-        posts = Post.objects.filter(author=user).order_by("-created_at")
+        posts = Post.objects.filter(author=user)
         paginator = Paginator(posts, 10)
         page_number = self.request.GET.get("page")
         context["page_obj"] = paginator.get_page(page_number)

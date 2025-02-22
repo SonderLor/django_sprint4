@@ -109,6 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CSRF_FAILURE_VIEW = 'pages.views.custom_403_csrf'
 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
