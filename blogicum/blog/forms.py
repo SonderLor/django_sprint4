@@ -21,13 +21,14 @@ class UserEditForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ["title", "text", "pub_date", "location", "category"]
+        fields = ["title", "text", "pub_date", "location", "category", "image"]
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "text": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
             "pub_date": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
             "location": forms.Select(attrs={"class": "form-control"}),
             "category": forms.Select(attrs={"class": "form-control"}),
+            "image": forms.ClearableFileInput(attrs={"class": "form-control-file"}),
         }
 
 
