@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, CreateView
 
-from blog.forms import UserEditForm
+from blog.forms import UserEditForm, PostForm
 from blog.models import Post, Category
 from blog.utils import get_relevant_posts
 
@@ -30,6 +31,19 @@ class PostDetailView(DetailView):
     def get_object(self):
         post_id = self.kwargs.get("post_id")
         return get_object_or_404(get_relevant_posts(Post.objects), id=post_id)
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/create.html"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("blog:profile", kwargs={"username": self.request.user.username})
 
 
 class CategoryPostsView(ListView):
