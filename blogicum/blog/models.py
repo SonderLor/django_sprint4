@@ -74,7 +74,8 @@ class Post(BaseModel):
         verbose_name='Категория',
         related_name='posts',
     )
-    image = models.ImageField('Изображение', upload_to='posts/', null=True, blank=True)
+    image = models.ImageField('Изображение', upload_to='posts/', null=True,
+                              blank=True)
 
     @property
     def comment_count(self):
@@ -90,8 +91,10 @@ class Post(BaseModel):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                             related_name="comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name="comments")
     text = models.TextField("Текст комментария")
     created_at = models.DateTimeField(auto_now_add=True)
 

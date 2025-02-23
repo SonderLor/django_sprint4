@@ -116,7 +116,8 @@ def comment_delete_view(request, post_id, comment_id):
 
 
 def category_posts_view(request, category_slug):
-    category = get_object_or_404(Category.objects.filter(is_published=True), slug=category_slug)
+    category = get_object_or_404(Category.objects.filter(is_published=True),
+                                 slug=category_slug)
     posts = get_relevant_posts(category.posts.filter(category=category))
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
@@ -145,7 +146,8 @@ def edit_profile(request):
         form = UserEditForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect(reverse("blog:profile", kwargs={"username": user.username}))
+            return redirect(
+                reverse("blog:profile", kwargs={"username": user.username}))
     else:
         form = UserEditForm(instance=user)
 

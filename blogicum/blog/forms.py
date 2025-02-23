@@ -25,10 +25,12 @@ class PostForm(forms.ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "text": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
-            "pub_date": forms.DateTimeInput(attrs={"class": "form-control", "type": "datetime-local"}),
+            "pub_date": forms.DateTimeInput(
+                attrs={"class": "form-control", "type": "datetime-local"}),
             "location": forms.Select(attrs={"class": "form-control"}),
             "category": forms.Select(attrs={"class": "form-control"}),
-            "image": forms.ClearableFileInput(attrs={"class": "form-control-file"}),
+            "image": forms.ClearableFileInput(
+                attrs={"class": "form-control-file"}),
         }
 
 
