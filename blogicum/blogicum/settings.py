@@ -113,6 +113,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
+LOGIN_URL = "/auth/login/"
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
